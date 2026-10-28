@@ -24,6 +24,8 @@ export class HarvestablesDrawing extends DrawingUtils  {
         for (const harvestableOne of harvestables)
         {
             if (harvestableOne.size <= 0) continue;
+            // Modo exclusivo: nenhum recurso estatico ou recurso vivo duplicado neste desenho.
+            if (settingsSync.getBool("settingOnlyLargeResources")) continue;
 
             const mobileTypeId = harvestableOne.mobileTypeId;
             const isPureStatic = mobileTypeId === null || mobileTypeId === undefined

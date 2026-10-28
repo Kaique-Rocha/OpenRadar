@@ -2,6 +2,8 @@ import {DrawingUtils} from "../utils/DrawingUtils.js";
 import {EnemyType, getSettingNameForEnemyType} from "../handlers/MobsHandler.js";
 import {CATEGORIES} from "../constants/LoggerConstants.js";
 import settingsSync from "../utils/SettingsSync.js";
+import {isLargeLivingResource} from "../utils/LargeLivingResource.js";
+import {isResourceAspect, isResourceGuardian} from "../utils/ResourceAspect.js";
 import {shouldRenderLivingResource} from "../utils/LivingResourceFilter.js";
 
 export class MobsDrawing extends DrawingUtils
@@ -39,7 +41,12 @@ export class MobsDrawing extends DrawingUtils
             if (mobOne.type == EnemyType.LivingSkinnable || mobOne.type == EnemyType.LivingHarvestable)
             {
                 isLivingResource = true;
-                if (!shouldRenderLivingResource(mobOne, key => settingsSync.getJSON(key))) {
+                const aspect = isResourceAspect(mobOne);
+                const guardian = isResourceGuardian(mobOne);
+                const showSpecial = (aspect && settingsSync.getBool("settingAllAspects")) || (guardian && settingsSync.getBool("settingAllGuardians"));
+                if (settingsSync.getBool("settingOnlyAspects") && !showSpecial) continue;
+                if (settingsSync.getBool("settingOnlyLargeResources") && !isLargeLivingResource(mobOne) && !showSpecial) continue;
+                if (!showSpecial && !shouldRenderLivingResource(mobOne, key => settingsSync.getJSON(key))) {
                     continue;
                 }
                 // Only set imageName if mob has been identified (has name from mobinfo or cross-ref)
@@ -52,8 +59,23 @@ export class MobsDrawing extends DrawingUtils
                 drawHealthBar = settingsSync.getBool("settingLivingResourcesHealthBar");
                 drawId = settingsSync.getBool("settingLivingResourcesID");
             }
+            else if (mobOne.type === EnemyType.Treasure)
+            {
+                // Filtro independente para baús classificados como criaturas.
+                if (!settingsSync.getBool("settingHiddenTreasures")) continue;
+                imageName = "hidden_treasure";
+                imageFolder = "Resources";
+                drawHealthBar = false;
+                drawId = false;
+            }
             else if (mobOne.type >= EnemyType.Enemy && mobOne.type <= EnemyType.Boss)
             {
+                // Aspectos classificados como mobs hostis ignoram o filtro de inimigos normais.
+                const aspect = isResourceAspect(mobOne);
+                const guardian = isResourceGuardian(mobOne);
+                if ((aspect && settingsSync.getBool('settingAllAspects')) || (guardian && settingsSync.getBool('settingAllGuardians'))) {
+                    imageName = undefined;
+                } else {
                 if (!mobOne.identified) {
                     if (settingsSync.getBool("settingShowUnmanagedEnemies") === false) continue;
                 } else {
@@ -66,6 +88,7 @@ export class MobsDrawing extends DrawingUtils
                     if ((mobOne.maxHealth ?? 0) < threshold) continue;
                 }
 
+                }
                 // Use color-coded circles for hostile mobs (not images)
                 // imageName stays undefined to trigger the colored circle rendering below
                 // The color is determined by mob.type (Enemy=green, EnchantedEnemy=purple, MiniBoss=orange, Boss=red)
@@ -215,6 +238,14 @@ export class MobsDrawing extends DrawingUtils
                 const nameWidth = ctx.measureText(displayName).width;
                 this.drawTextItems(point.x - nameWidth / 2, point.y + currentYOffset, displayName, ctx, fontSize9, "#FFFFFF");
                 currentYOffset += offset12; // Move down for next element
+            }
+
+            if (mobOne.type === EnemyType.Treasure) {
+                const chestLabel = `TESOURO T${mobOne.tier || '?'}`;
+                ctx.font = `${fontSize10} ${this.fontFamily}`;
+                const width = ctx.measureText(chestLabel).width;
+                this.drawTextItems(point.x - width / 2, point.y + currentYOffset, chestLabel, ctx, fontSize10, "#FFD36A");
+                currentYOffset += offset12;
             }
 
             // Display Category Badge

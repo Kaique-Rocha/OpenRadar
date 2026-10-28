@@ -126,6 +126,21 @@
                     </div>
                 </label>
 
+                <!-- Filtro de recursos vivos grandes, independente do tier. -->
+                <div class="rounded-lg border border-warning/30 bg-warning/5 p-3 space-y-3">
+                    <div class="font-semibold">Recursos grandes (Veteran / Elite)</div>
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" id="settingHighlightLargeResources" class="checkbox checkbox-warning">
+                        <span>Destacar recursos grandes com contorno dourado</span>
+                    </label>
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" id="settingOnlyLargeResources" class="checkbox checkbox-warning">
+                        <span>Mostrar somente recursos grandes (oculta os outros recursos)</span>
+                    </label>
+                    <p class="text-xs opacity-70">Identifica recursos vivos com nome interno CRITTER e sufixo VETERAN/ELITE.
+                    Inimigos e baus possuem filtros separados. Depende da identificacao correta do catalogo.</p>
+                </div>
+
                 <label class="flex items-center gap-3 cursor-pointer group">
                     <input type="checkbox" id="settingResourceClusters" class="checkbox checkbox-primary">
                     <span class="text-base-content/80 group-hover:text-base-content transition-colors">Show Clusters</span>
@@ -304,6 +319,8 @@
             bindCheckbox("settingResourceCount");
             bindCheckbox("settingResourceDistance");
             bindCheckbox("settingResourceClusters");
+            bindCheckbox("settingHighlightLargeResources");
+            bindCheckbox("settingOnlyLargeResources");
             bindCheckbox("settingLivingResourcesHealthBar");
             bindCheckbox("settingLivingResourcesID");
             bindCheckbox("settingLivingResourcesName");

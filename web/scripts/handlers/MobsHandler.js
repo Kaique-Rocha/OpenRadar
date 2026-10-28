@@ -13,6 +13,7 @@ export const EnemyType =
         Drone: 7,
         MistBoss: 8,
         Events: 9,
+        Treasure: 10,
     };
 
 const MIST_PORTAL_NAME_PREFIX = 'MISTS_';
@@ -210,6 +211,7 @@ export class MobsHandler {
             }) || 0;
             mob.name = dbInfo.type;
             mob.uniqueName = dbInfo.uniqueName;
+            mob.lootType = dbInfo.lootType || null;
             mob.type = dbInfo.type === 'Hide' ? EnemyType.LivingSkinnable : EnemyType.LivingHarvestable;
             hasKnownInfo = true;
 
@@ -225,7 +227,12 @@ export class MobsHandler {
         } else if (dbInfo) {
             // Hostile mob from MobsDatabase
             mob.mistBoss = findMistBoss(dbInfo.uniqueName);
-            mob.type = mob.mistBoss ? EnemyType.MistBoss : this._getEnemyTypeFromCategory(dbInfo.category, dbInfo.uniqueName);
+            // Baús que chegam como mobs não devem depender do filtro Normal Enemies.
+            const nameUpper = String(dbInfo.uniqueName || '').toUpperCase();
+            const isTreasure = dbInfo.category === 'chest' ||
+                /^T\d+_MOB_TN_.*_CHEST$/.test(nameUpper);
+            mob.type = isTreasure ? EnemyType.Treasure :
+                (mob.mistBoss ? EnemyType.MistBoss : this._getEnemyTypeFromCategory(dbInfo.category, dbInfo.uniqueName));
             mob.name = dbInfo.uniqueName;
             mob.tier = dbInfo.tier || 0;   // Store tier for hostile mobs
             mob.category = dbInfo.category || null;  // Store category for badge display
@@ -598,7 +605,8 @@ export class MobsHandler {
             6: "Boss",
             7: "Drone",
             8: "MistBoss",
-            9: "Events"
+            9: "Events",
+            10: "Treasure"
         };
         return names[type] || `Unknown(${type})`;
     }

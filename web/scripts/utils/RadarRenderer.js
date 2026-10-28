@@ -480,6 +480,7 @@ export class RadarRenderer {
     }
 
     _collectClusterCandidates() {
+        if (settingsSync.getBool("settingOnlyLargeResources")) return [];
         const getSetting = key => settingsSync.getJSON(key);
         const staticList = (this.handlers.harvestablesHandler?.harvestableList || []).filter(h => {
             const entity = {name: h.stringType, tier: h.tier, enchantmentLevel: h.charges};
