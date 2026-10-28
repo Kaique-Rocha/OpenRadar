@@ -24,6 +24,23 @@
         </div>
     </div>
 
+    <!-- Filtros independentes: sempre visiveis, nao dependem de inimigos normais -->
+    <div class="card bg-base-200 border border-base-content/10" id="openradar-special-filters-v2">
+        <div class="card-body gap-4">
+            <div>
+                <h2 class="card-title text-xl">Filtros Especiais — Aspectos e Tesouros</h2>
+                <p class="text-base-content/60 text-sm">Estas opcoes nao ativam inimigos normais e funcionam independentemente de Normal, Mini-Boss e Boss.</p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" id="settingAllAspects" class="checkbox checkbox-secondary"><span>Mostrar TODOS os Aspectos (MINIGUARDIAN, todos os tiers)</span></label>
+                <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" id="settingAllGuardians" class="checkbox checkbox-secondary"><span>Mostrar Guardioes maiores (GUARDIAN)</span></label>
+                <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" id="settingHiddenTreasures" class="checkbox checkbox-warning"><span>Mostrar Tesouros Escondidos (sprite de bau)</span></label>
+                <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" id="settingOnlyAspects" class="checkbox checkbox-secondary"><span>Ocultar recursos vivos comuns (manter especiais habilitados)</span></label>
+            </div>
+            <p class="text-xs text-base-content/50">Painel especial v2. Aspectos, guardioes e tesouros sao categorias separadas; a identificacao depende dos IDs recebidos no jogo.</p>
+        </div>
+    </div>
+
     <!-- Classic Enemies -->
     <div class="collapse collapse-arrow bg-base-200 rounded-xl">
         <input type="checkbox" id="collapse-classic" />
@@ -37,18 +54,6 @@
                     <input type="checkbox" id="settingAllEnemies" class="checkbox checkbox-primary">
                     <span class="text-base-content font-medium group-hover:text-primary transition-colors">All</span>
                     <div class="tooltip" data-tip="Toggle all enemy types at once.">
-                        <i data-lucide="info" class="w-4 h-4 opacity-50"></i>
-                    </div>
-                </label>
-
-                <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" id="settingAllAspects" class="checkbox checkbox-secondary"><span>Todos os aspectos de coleta (MINIGUARDIAN, todos os tiers, sem mobs normais)</span></label>
-                <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" id="settingAllGuardians" class="checkbox checkbox-secondary"><span>Mostrar guardiões maiores (GUARDIAN) separadamente</span></label>
-                <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" id="settingOnlyAspects" class="checkbox checkbox-secondary"><span>Ocultar recursos vivos comuns (somente aspectos/guardiões habilitados)</span></label>
-                <label class="flex items-center gap-3 cursor-pointer group">
-                    <input type="checkbox" id="settingHiddenTreasures" class="checkbox checkbox-warning">
-                    <span class="text-xl">🧰</span>
-                    <span class="text-base-content/80 group-hover:text-base-content transition-colors">Tesouros Escondidos (separado dos mobs)</span>
-                    <div class="tooltip" data-tip="Exibe baús identificados como mobs, mesmo com Normal desativado.">
                         <i data-lucide="info" class="w-4 h-4 opacity-50"></i>
                     </div>
                 </label>
