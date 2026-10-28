@@ -7,7 +7,7 @@ import {installRealDatabasesOnWindow} from '../__fixtures__/realDatabases.js';
 
 vi.mock('./SettingsSync.js', () => ({
     default: {
-        getBool: vi.fn(() => true),
+        getBool: vi.fn(key => key === 'settingOnlyLargeResources' ? false : true),
         getJSON: vi.fn(() => null),
         getNumber: vi.fn((_k, d) => d ?? 0),
     },
