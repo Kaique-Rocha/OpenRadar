@@ -1,0 +1,25 @@
+OpenRadar Windows x64 - geracao automatica via GitHub Actions
+
+O QUE E ISTO:
+O codigo usa Go no servidor, mas VOCE NAO PRECISA instalar Go, Node, Docker ou compiladores no Windows.
+A compilacao sera feita nos computadores do GitHub, com Go 1.27 (nao Go 1.26).
+Nao e um exe pronto: este pacote prepara a geracao automatica do exe.
+
+PASSOS:
+1. Entre em github.com e crie um repositorio novo, por exemplo "OpenRadar-Pessoal" (preferencialmente privado).
+2. Envie o CONTEUDO da pasta Albion-Online-OpenRadar-2.2.4-beta1 para a raiz desse repositorio, incluindo a pasta oculta .github.
+   Dica: pelo site, use "uploading an existing file" e arraste os arquivos/pastas da pasta extraida.
+   Se o GitHub web nao aceitar todas as pastas ou o volume de arquivos, use GitHub Desktop para publicar a pasta.
+3. Abra a aba Actions e escolha "Gerar EXE Windows (manual)".
+4. Clique Run workflow > Run workflow.
+5. Ao concluir a execucao com sucesso, abra o job e baixe o artefato OpenRadar-Windows-x64.
+6. Extraia o ZIP do artefato. O arquivo OpenRadar-windows-amd64.exe sera o aplicativo.
+7. E necessario ter Npcap instalado no Windows para a captura de pacotes.
+8. Execute o EXE e abra o endereco localhost indicado no console (normalmente http://localhost:5001).
+
+OBSERVACOES:
+- Go 1.27 continua sendo usado no GitHub; isto NAO e uma migracao para Python/PHP/JavaScript.
+- O EXE ainda NAO foi produzido nem testado neste ambiente.
+- O pacote carrega somente as correcoes PARCIAIS anteriores; mobs e tesouros ainda nao estao plenamente corrigidos.
+- Se o GitHub indicar falha de build, compartilhe o log para diagnostico.
+- Softwares de radar podem contrariar regras do jogo; consulte os termos aplicaveis.
