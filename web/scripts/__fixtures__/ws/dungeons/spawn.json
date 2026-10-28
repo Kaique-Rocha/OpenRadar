@@ -1,0 +1,75 @@
+{
+  "scenario": "spawn.json",
+  "handler": "dungeons",
+  "messages": [
+    {
+      "kind": "event",
+      "parameters": {
+        "0": 5418,
+        "1": [
+          224,
+          26
+        ],
+        "2": 90,
+        "3": "T7_KEEPER",
+        "4": "RD_DUNGEON_BLACK_3",
+        "6": "HIGHLAND_DEAD_RANDOM_EXIT_10x10_KPR",
+        "7": 280,
+        "8": true,
+        "9": 1,
+        "15": 0,
+        "17": -1,
+        "18": 2,
+        "20": 0,
+        "21": "",
+        "252": 325
+      }
+    },
+    {
+      "kind": "event",
+      "parameters": {
+        "0": 41517,
+        "1": [
+          258.2233,
+          47.141792
+        ],
+        "3": "MISTS_DUO_BLACK",
+        "6": "SHARED_MIST_WISP_PORTAL_MOB",
+        "7": 4,
+        "8": true,
+        "9": 2,
+        "15": 0,
+        "16": "MISTS_DUO_BLACK",
+        "17": 5306,
+        "18": 1,
+        "19": 639240606775041500,
+        "20": 0,
+        "21": "",
+        "252": 325
+      }
+    },
+    {
+      "kind": "event",
+      "parameters": {
+        "0": 2579,
+        "1": [
+          205,
+          225
+        ],
+        "3": "",
+        "6": "SHARED_MIST_DUNGEON_ENTRANCE_SMALL",
+        "7": 6,
+        "8": true,
+        "9": 0,
+        "15": 0,
+        "16": "MISTS_DUNGEON_SOLO_YELLOW",
+        "17": -1,
+        "18": 0,
+        "19": 639240609687900200,
+        "20": 5,
+        "21": "",
+        "252": 325
+      }
+    }
+  ]
+}

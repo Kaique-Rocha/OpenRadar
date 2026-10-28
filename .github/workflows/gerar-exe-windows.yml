@@ -1,0 +1,36 @@
+name: Gerar EXE Windows (manual)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-windows:
+    name: Compilacao automatica no GitHub
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Obter codigo do repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Gerar OpenRadar Windows x64 com Go 1.27
+        run: |
+          mkdir -p dist
+          docker build \
+            --file Dockerfile.windows \
+            --build-arg VERSION=2.2.4-beta1-custom \
+            --build-arg BUILD_TIME="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            --output type=local,dest=dist .
+
+      - name: Publicar executavel para baixar
+        uses: actions/upload-artifact@v4
+        with:
+          name: OpenRadar-Windows-x64
+          path: dist/OpenRadar-windows-amd64.exe
+          if-no-files-found: error
+          retention-days: 7
