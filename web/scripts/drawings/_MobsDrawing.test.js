@@ -43,7 +43,11 @@ describe('MobsDrawing living resource filter at render', () => {
         drawing.getMarkerSize = vi.fn(s => s);
         drawing.getScaledFontSize = vi.fn(s => s);
         ctx = {font: '', measureText: vi.fn(() => ({width: 12}))};
-        settingsSync.getBool.mockImplementation(key => key !== 'settingResourceColorBadges');
+        // Novos filtros devem ficar desligados nos testes legados de recursos comuns.
+        // Cada filtro especial possui testes próprios e não deve alterar estes cenários.
+        settingsSync.getBool.mockImplementation(key =>
+            !['settingResourceColorBadges', 'settingOnlyAspects', 'settingOnlyLargeResources'].includes(key)
+        );
     });
 
     function livingMob({id = 1, tier = 4, enchant = 0, name = 'Fiber'} = {}) {
@@ -194,7 +198,11 @@ describe('MobsDrawing DEAD critter routing (user live-test 2026-04-24: dead crit
         drawing.getMarkerSize = vi.fn(s => s);
         drawing.getScaledFontSize = vi.fn(s => s);
         ctx = {font: '', measureText: vi.fn(() => ({width: 12}))};
-        settingsSync.getBool.mockImplementation(key => key !== 'settingResourceColorBadges');
+        // Novos filtros devem ficar desligados nos testes legados de recursos comuns.
+        // Cada filtro especial possui testes próprios e não deve alterar estes cenários.
+        settingsSync.getBool.mockImplementation(key =>
+            !['settingResourceColorBadges', 'settingOnlyAspects', 'settingOnlyLargeResources'].includes(key)
+        );
         mobsHandler = new MobsHandler();
     });
 
