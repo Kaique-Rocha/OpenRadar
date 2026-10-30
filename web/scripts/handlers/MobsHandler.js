@@ -203,16 +203,22 @@ export class MobsHandler {
         const dbInfo = window.mobsDatabase?.getMobInfo(typeId);
         let hasKnownInfo = false;
 
-        if (dbInfo && dbInfo.isHarvestable) {
+        // Reconhece famílias de coleta também quando o dump omite Loot.Harvestable.
+        const resourceMatch = String(dbInfo?.uniqueName || '').toUpperCase()
+            .match(/^T[1-8]_MOB_(?:CRITTER_|DYNAMIC_)?(HIDE|FIBER|WOOD|ROCK|ORE)(?:_|$)/);
+        const fallbackResource = resourceMatch
+            ? ({HIDE: 'Hide', FIBER: 'Fiber', WOOD: 'Log', ROCK: 'Rock', ORE: 'Ore'})[resourceMatch[1]]
+            : null;
+        if (dbInfo && (dbInfo.isHarvestable || fallbackResource)) {
             mob.tier = getLivingHarvestTier({
                 u: dbInfo.uniqueName,
                 t: dbInfo.combatTier,
                 l: dbInfo.lootType,
             }) || 0;
-            mob.name = dbInfo.type;
+            mob.name = dbInfo.type || fallbackResource;
             mob.uniqueName = dbInfo.uniqueName;
             mob.lootType = dbInfo.lootType || null;
-            mob.type = dbInfo.type === 'Hide' ? EnemyType.LivingSkinnable : EnemyType.LivingHarvestable;
+            mob.type = mob.name === 'Hide' ? EnemyType.LivingSkinnable : EnemyType.LivingHarvestable;
             hasKnownInfo = true;
 
             window.logger?.debug(CATEGORIES.MOBS, 'MobsDatabaseMatch', {
@@ -231,8 +237,11 @@ export class MobsHandler {
             const nameUpper = String(dbInfo.uniqueName || '').toUpperCase();
             const isTreasure = dbInfo.category === 'chest' ||
                 /^T\d+_MOB_TN_.*_CHEST$/.test(nameUpper);
+            const isAvalonianDrone = String(dbInfo.category || '').toLowerCase() === 'treasuredrones' ||
+                (/AVALON/.test(nameUpper) && /DRONE/.test(nameUpper));
             mob.type = isTreasure ? EnemyType.Treasure :
-                (mob.mistBoss ? EnemyType.MistBoss : this._getEnemyTypeFromCategory(dbInfo.category, dbInfo.uniqueName));
+                (isAvalonianDrone ? EnemyType.Drone :
+                    (mob.mistBoss ? EnemyType.MistBoss : this._getEnemyTypeFromCategory(dbInfo.category, dbInfo.uniqueName)));
             mob.name = dbInfo.uniqueName;
             mob.tier = dbInfo.tier || 0;   // Store tier for hostile mobs
             mob.category = dbInfo.category || null;  // Store category for badge display
