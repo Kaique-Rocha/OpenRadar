@@ -61,9 +61,16 @@ export class MobsDrawing extends DrawingUtils
             }
             else if (mobOne.type === EnemyType.Treasure)
             {
-                // Filtro independente para baús classificados como criaturas.
-                if (!settingsSync.getBool("settingHiddenTreasures")) continue;
-                imageName = "hidden_treasure";
+                // Drones avalonianos são baús: filtro de baús OU filtro legado de drones.
+                // Não dependem do filtro de inimigos normais.
+                if (mobOne.isAvalonianChest) {
+                    if (!settingsSync.getBool("settingHiddenTreasures") &&
+                        !settingsSync.getBool("settingAvaloneDrones")) continue;
+                    imageName = "AVALONMINIONCHEST";
+                } else {
+                    if (!settingsSync.getBool("settingHiddenTreasures")) continue;
+                    imageName = "hidden_treasure";
+                }
                 imageFolder = "Resources";
                 drawHealthBar = false;
                 drawId = false;
