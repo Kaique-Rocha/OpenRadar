@@ -37,6 +37,32 @@ describe('MobsHandler', () => {
         handler = new MobsHandler();
     });
 
+    describe('chest and Avalonian drone classification', () => {
+        test.each([
+            ['treasuredrones', 'T6_MOB_AVALON_DRONE', true],
+            ['chest', 'T5_MOB_TN_LOOTCHEST', false],
+            ['hiddentreasures', 'T6_MOB_HIDDENTREASURE', false],
+        ])('routes %s / %s through Treasure rendering', (category, name, isAvalonianChest) => {
+            const typeId = 900000;
+            vi.spyOn(window.mobsDatabase, 'getMobInfo').mockReturnValue({
+                uniqueName: name, category, tier: 6, isHarvestable: false
+            });
+            handler.AddEnemy(87601, typeId, 1, 2, 255, 400, 0, 0);
+            expect(handler.getMobList()[0]).toMatchObject({
+                type: EnemyType.Treasure, isAvalonianChest
+            });
+        });
+
+        test('ordinary Avalonian hostile is not a chest', () => {
+            vi.spyOn(window.mobsDatabase, 'getMobInfo').mockReturnValue({
+                uniqueName: 'T6_MOB_AVALON_KNIGHT', category: 'avalon',
+                tier: 6, isHarvestable: false
+            });
+            handler.AddEnemy(87602, 900001, 1, 2, 255, 400, 0, 0);
+            expect(handler.getMobList()[0].type).not.toBe(EnemyType.Treasure);
+        });
+    });
+
     // -------------------------------------------------------------------------
     // NewMobEvent (event 123) - pcap-derived
     // -------------------------------------------------------------------------
