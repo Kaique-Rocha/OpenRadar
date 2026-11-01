@@ -235,13 +235,16 @@ export class MobsHandler {
             mob.mistBoss = findMistBoss(dbInfo.uniqueName);
             // Baús que chegam como mobs não devem depender do filtro Normal Enemies.
             const nameUpper = String(dbInfo.uniqueName || '').toUpperCase();
-            const isTreasure = dbInfo.category === 'chest' ||
-                /^T\d+_MOB_TN_.*_CHEST$/.test(nameUpper);
-            const isAvalonianDrone = String(dbInfo.category || '').toLowerCase() === 'treasuredrones' ||
-                (/AVALON/.test(nameUpper) && /DRONE/.test(nameUpper));
+            const category = String(dbInfo.category || '').toLowerCase();
+            const isAvalonianDrone = category === 'treasuredrones' ||
+                (/AVALON/.test(nameUpper) && /(?:DRONE|MINIONCHEST)/.test(nameUpper));
+            const isTreasure = isAvalonianDrone || category === 'chest' ||
+                category === 'hiddentreasures' ||
+                /(?:^|_)(?:LOOTCHEST|TREASURECHEST|HIDDENTREASURE|CHEST)(?:_|$)/.test(nameUpper);
+            // Drones avalonianos e todos os baús identificáveis compartilham o filtro de tesouros.
+            mob.isAvalonianChest = isAvalonianDrone;
             mob.type = isTreasure ? EnemyType.Treasure :
-                (isAvalonianDrone ? EnemyType.Drone :
-                    (mob.mistBoss ? EnemyType.MistBoss : this._getEnemyTypeFromCategory(dbInfo.category, dbInfo.uniqueName)));
+                (mob.mistBoss ? EnemyType.MistBoss : this._getEnemyTypeFromCategory(dbInfo.category, dbInfo.uniqueName));
             mob.name = dbInfo.uniqueName;
             mob.tier = dbInfo.tier || 0;   // Store tier for hostile mobs
             mob.category = dbInfo.category || null;  // Store category for badge display
