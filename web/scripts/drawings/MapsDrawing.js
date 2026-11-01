@@ -41,6 +41,21 @@ export class MapDrawing extends DrawingUtils
         if (imageName === undefined || imageName == "undefined")
             return;
 
+        // Instâncias aleatórias usam UUID e não possuem imagem estática no projeto.
+        // Os dois túneis abaixo também foram confirmados ausentes no catálogo.
+        // Mantém o fundo neutro e a sobreposição de entidades sem gerar HTTP 404.
+        const hasNoStaticAsset = String(imageName).startsWith("@RANDOMDUNGEON@") ||
+            imageName === "TNL-272" || imageName === "TNL-281";
+        if (hasNoStaticAsset) {
+            ctx.save();
+            ctx.fillStyle = '#a8afbd';
+            ctx.font = '12px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Mapa interno sem imagem disponível', ctx.width / 2, 24);
+            ctx.restore();
+            return;
+        }
+
         const src = "/images/Maps/" + imageName + ".webp";
 
         const preloadedImage = imageCache.GetPreloadedImage(src, "Maps");
