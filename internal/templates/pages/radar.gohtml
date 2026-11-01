@@ -10,8 +10,23 @@
 [data-sections="3"] .player-cards {
     grid-template-columns: 1fr;
 }
+/* Dashboard em colunas: sidebar global à esquerda, mapa central, jogadores à direita. */
+#page-content[data-page="radar"] > .container { max-width: none; width: 100%; }
+.radar-workspace { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; align-items: start; }
+.radar-map-pane { min-width: 0; }
+.radar-players-pane { min-width: 0; }
+@media (min-width: 1350px) {
+    .radar-workspace { grid-template-columns: minmax(540px, 1fr) minmax(320px, 400px); }
+    .radar-players-pane { position: sticky; top: 0; max-height: calc(100vh - 7rem); overflow-y: auto; }
+    .radar-players-pane #playersList { flex-direction: column; flex-wrap: nowrap; }
+    .radar-players-pane #playersHostile,
+    .radar-players-pane #playersFaction,
+    .radar-players-pane #playersPassive { width: 100%; }
+    .radar-players-pane .player-cards { grid-template-columns: minmax(0, 1fr) !important; }
+}
 </style>
-<div class="space-y-4">
+<div class="radar-workspace">
+<div class="radar-map-pane">
     <!-- Canvas Section -->
     <div class="card bg-base-200">
         <div class="card-body p-2 sm:p-4">
@@ -70,6 +85,8 @@
         </div>
     </div>
 
+</div>
+<div class="radar-players-pane">
     <!-- Detected Players Section -->
     <div id="playersSection" class="card bg-base-200">
         <div class="card-body">
@@ -138,6 +155,7 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 {{end}}
 
