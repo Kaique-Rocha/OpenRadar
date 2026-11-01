@@ -74,7 +74,12 @@ export class ChestsHandler {
         });
 
         const chestId = Parameters[0];
-        const chestsPosition = Parameters[1];
+        // Em alguns eventos atuais Parameters[1] passou a ser um valor escalar
+        // (ex.: 6, 7, 8). Procurar somente coordenadas explícitas [x, y].
+        const isCoordinate = value => Array.isArray(value) && value.length >= 2 &&
+            Number.isFinite(Number(value[0])) && Number.isFinite(Number(value[1]));
+        const chestsPosition = isCoordinate(Parameters[1]) ? Parameters[1] :
+            [7, 2, 8, 9].map(index => Parameters[index]).find(isCoordinate);
         let chestName = Parameters[3];
         const rarity = Parameters[5] ?? null;
 
@@ -83,7 +88,7 @@ export class ChestsHandler {
         }
         if (!Array.isArray(chestsPosition) || chestsPosition.length < 2 ||
             !Number.isFinite(Number(chestsPosition[0])) || !Number.isFinite(Number(chestsPosition[1]))) {
-            window.logger?.warn(CATEGORIES.DUNGEONS, 'invalid_chest_position', {chestId, chestsPosition});
+            window.logger?.warn(CATEGORIES.DUNGEONS, 'invalid_chest_position', {chestId, originalPosition: Parameters[1], coordinateCandidates: [2, 7, 8, 9].map(index => ({index, value: Parameters[index]}))});
             return;
         }
         this.addChest(chestId, Number(chestsPosition[0]), Number(chestsPosition[1]), chestName, rarity);
