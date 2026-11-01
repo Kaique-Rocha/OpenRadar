@@ -371,8 +371,12 @@ export class HarvestablesHandler
 
     removeNotInRange(lpX, lpY)
     {
+        // Mantém recursos já recebidos por mais distância visual.
+        // Não amplia o alcance dos eventos enviados pelo servidor.
+        const distanceSetting = Number(window.settingsSync?.getNumber?.('settingResourceRetentionDistance', 120) ?? 120);
+        const maxDistance = Math.min(200, Math.max(40, Number.isFinite(distanceSetting) ? distanceSetting : 120));
         this.harvestableList = this.harvestableList.filter(
-            (x) => this.calculateDistance(lpX, lpY, x.posX, x.posY) <= 80
+            (x) => this.calculateDistance(lpX, lpY, x.posX, x.posY) <= maxDistance
         );
 
         this.harvestableList = this.harvestableList.filter(item => item.size !== undefined);
