@@ -64,3 +64,36 @@ body.mobile-menu-open .mobile-menu-overlay { opacity: 1; pointer-events: auto; }
     transition: transform var(--transition-slow);
 }
 body.mobile-menu-open .mobile-sidebar { transform: translateX(0); }
+
+/* Tactical dashboard: modern skin; existing canvas and interaction IDs preserved. */
+body { background: #090f1b; }
+#page-content[data-page="radar"] { background: radial-gradient(ellipse at 35% 0%, #16243c 0%, #0b1220 48%, #090f1b 100%); }
+#page-content[data-page="radar"] > .container { max-width: none; }
+#page-content[data-page="radar"] .card { background: linear-gradient(145deg, #131e31, #101827); border: 1px solid rgba(129,159,206,.14); box-shadow: 0 12px 30px rgba(0,0,0,.12); border-radius: 16px; }
+#page-content[data-page="radar"] .card-body { min-width: 0; }
+.radar-command-header { display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap; padding:22px 24px; margin-bottom:16px; border-radius:18px; background:linear-gradient(112deg,#162b44,#121a2c 60%,#182538); border:1px solid rgba(94,203,255,.2); }
+.radar-eyebrow { font-size:10px; font-weight:750; letter-spacing:.2em; color:#67d6f6; }
+.radar-command-header h1 { margin:6px 0 5px; font-size:clamp(22px,2vw,30px); font-weight:800; letter-spacing:-.04em; color:#f1f6ff; }
+.radar-header-accent { color:#57d1f5; }
+.radar-command-header p { color:#9db0cb; font-size:12px; line-height:1.6; }
+.radar-controls-button { display:flex; align-items:center; gap:9px; padding:11px 15px; font-weight:700; border:1px solid #2c7395; border-radius:10px; color:#e7faff; background:#16435a; cursor:pointer; }
+.radar-controls-button:hover { background:#1a5772; }
+.radar-controls-button svg { width:16px;height:16px; }
+.radar-quick-panel { margin-bottom:16px; padding:16px; background:#0f1a2b; border:1px solid rgba(122,167,220,.18); border-radius:16px; }
+.radar-quick-panel[hidden] { display:none !important; }
+.radar-quick-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr));gap:10px; }
+.radar-switch-card { min-width:0; display:flex;align-items:center;gap:10px;padding:12px;background:#162236;border:1px solid #273a51;border-radius:12px;cursor:pointer; transition:background .15s,border-color .15s; }
+.radar-switch-card:hover { background:#1e3048;border-color:#34708c; }
+.radar-switch-card:has(input:checked) { border-color:#3284a9;background:#143149; }
+.radar-switch-card > span:nth-child(2) { flex:1;min-width:0; }
+.radar-switch-icon { font-size:21px;line-height:1; }
+.radar-switch-card strong,.radar-switch-card small { display:block; }
+.radar-switch-card strong { font-size:12px;color:#e8f2ff; }
+.radar-switch-card small { font-size:10px;color:#92a8bf;margin-top:3px; }
+.radar-switch-card input[type="checkbox"] { appearance:none;flex:0 0 auto;width:30px;height:17px;border-radius:20px;background:#46556b;border:1px solid #63748b;position:relative;cursor:pointer; }
+.radar-switch-card input[type="checkbox"]::before { content:"";width:11px;height:11px;position:absolute;left:2px;top:2px;background:#edf3ff;border-radius:50%;transition:transform .15s; }
+.radar-switch-card input[type="checkbox"]:checked { background:#18a6d4;border-color:#38d1ef; }
+.radar-switch-card input[type="checkbox"]:checked::before { transform:translateX(13px); }
+.radar-control-note { color:#93a8bd;font-size:11px;margin-top:11px;line-height:1.5; }
+@media(max-width:1180px) { .radar-quick-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:600px) { .radar-quick-grid { grid-template-columns:1fr; }.radar-command-header {padding:16px;}.radar-controls-button {width:100%;justify-content:center;} }
