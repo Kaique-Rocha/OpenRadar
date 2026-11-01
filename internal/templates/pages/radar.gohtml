@@ -25,6 +25,27 @@
     .radar-players-pane .player-cards { grid-template-columns: minmax(0, 1fr) !important; }
 }
 </style>
+<section class="radar-command-header" aria-label="Painel de controle">
+  <div>
+    <span class="radar-eyebrow">OPENRADAR / CENTRAL DE EXPLORAÇÃO</span>
+    <h1>Radar tático <span class="radar-header-accent">ao vivo</span></h1>
+    <p>Controle o que aparece no mapa. Suas preferências ficam salvas neste navegador.</p>
+  </div>
+  <button type="button" class="radar-controls-button" id="radarQuickToggle" aria-expanded="true" aria-controls="radarQuickPanel"><i data-lucide="sliders-horizontal"></i> Filtros rápidos <i data-lucide="chevron-down"></i></button>
+</section>
+<section id="radarQuickPanel" class="radar-quick-panel" aria-label="Filtros de exploração">
+ <div class="radar-quick-grid">
+  <label class="radar-switch-card"><span class="radar-switch-icon">🛡️</span><span><strong>Jogadores</strong><small>Alertas e lista</small></span><input type="checkbox" data-radar-setting="settingShowPlayers" aria-label="Mostrar jogadores"></label>
+  <label class="radar-switch-card"><span class="radar-switch-icon">💎</span><span><strong>Tesouros</strong><small>Baús e cofres ocultos</small></span><input type="checkbox" data-radar-setting="settingHiddenTreasures" aria-label="Mostrar tesouros"></label>
+  <label class="radar-switch-card"><span class="radar-switch-icon">⚙️</span><span><strong>Drones Avalon</strong><small>Baús avalonianos</small></span><input type="checkbox" data-radar-setting="settingAvaloneDrones" aria-label="Mostrar drones de Avalon"></label>
+  <label class="radar-switch-card"><span class="radar-switch-icon">✨</span><span><strong>Aspectos</strong><small>Recursos especiais</small></span><input type="checkbox" data-radar-setting="settingAllAspects" aria-label="Mostrar aspectos"></label>
+  <label class="radar-switch-card"><span class="radar-switch-icon">🌲</span><span><strong>Guardiões</strong><small>Recursos vivos</small></span><input type="checkbox" data-radar-setting="settingAllGuardians" aria-label="Mostrar guardiões"></label>
+  <label class="radar-switch-card"><span class="radar-switch-icon">🐟</span><span><strong>Pesca</strong><small>Cardumes detectados</small></span><input type="checkbox" data-radar-setting="settingFishing" aria-label="Mostrar pontos de pesca"></label>
+  <label class="radar-switch-card"><span class="radar-switch-icon">🌫️</span><span><strong>Wisps</strong><small>Portais das Mists</small></span><input type="checkbox" data-radar-setting="settingWispSpawn" aria-label="Mostrar wisps"></label>
+  <label class="radar-switch-card"><span class="radar-switch-icon">🔔</span><span><strong>Alertas PvP</strong><small>Aviso sonoro</small></span><input type="checkbox" data-radar-setting="settingSound" aria-label="Ativar aviso sonoro"></label>
+ </div>
+ <p class="radar-control-note">Os controles apenas habilitam funcionalidades já presentes. Uma entidade só aparece quando o jogo envia seus dados e ela é reconhecida.</p>
+</section>
 <div class="radar-workspace">
 <div class="radar-map-pane">
     <!-- Canvas Section -->
@@ -201,6 +222,35 @@ window.onGlobalsReady(function() {
         }
     }
     document.body.addEventListener('htmx:beforeSwap', htmxCleanupHandler);
+
+    // Atalhos persistentes para os filtros já utilizados pelos handlers.
+    const quickPanel = document.getElementById('radarQuickPanel');
+    const quickButton = document.getElementById('radarQuickToggle');
+    const quickInputs = Array.from(document.querySelectorAll('[data-radar-setting]'));
+    const panelPreference = localStorage.getItem('radarQuickCollapsed') === 'true';
+    function setQuickCollapsed(collapsed) {
+        if (quickPanel) quickPanel.hidden = collapsed;
+        if (quickButton) quickButton.setAttribute('aria-expanded', String(!collapsed));
+        localStorage.setItem('radarQuickCollapsed', String(collapsed));
+    }
+    setQuickCollapsed(panelPreference);
+    addListener(quickButton, 'click', () => setQuickCollapsed(!quickPanel.hidden));
+    quickInputs.forEach(input => {
+        const key = input.dataset.radarSetting;
+        input.checked = settingsSync.getBool(key);
+        addListener(input, 'change', () => {
+            settingsSync.setBool(key, input.checked);
+            if (key === 'settingShowPlayers') {
+                const master = document.getElementById(key);
+                if (master) master.checked = input.checked;
+                const list = document.getElementById('playersListContainer');
+                if (list) list.style.display = input.checked ? 'block' : 'none';
+            }
+        });
+        const sync = (_key, value) => { input.checked = value === 'true'; };
+        settingsSync.on(key, sync);
+        cleanup.push(() => settingsSync.off(key, sync));
+    });
 
     // Bind display checkboxes
     ['settingResourceCount', 'settingResourceDistance', 'settingResourceClusters'].forEach(id => {
