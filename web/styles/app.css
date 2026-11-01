@@ -97,3 +97,30 @@ body { background: #090f1b; }
 .radar-control-note { color:#93a8bd;font-size:11px;margin-top:11px;line-height:1.5; }
 @media(max-width:1180px) { .radar-quick-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
 @media(max-width:600px) { .radar-quick-grid { grid-template-columns:1fr; }.radar-command-header {padding:16px;}.radar-controls-button {width:100%;justify-content:center;} }
+
+/* Modelo 1: grupos expansíveis e menu de navegação refinado. */
+#desktop-sidebar { background:linear-gradient(180deg,#131328,#101827 65%,#0b1321);border-right:1px solid rgba(150,125,245,.17); }
+#desktop-nav a { border-radius:10px; margin:2px 0; }
+#desktop-nav a:hover { background:rgba(133,101,229,.13);color:#f4eeff; }
+#desktop-sidebar .sidebar-expanded-only { letter-spacing:.01em; }
+.radar-filter-heading {display:flex;justify-content:space-between;align-items:center;gap:12px;padding:2px 3px 13px;flex-wrap:wrap;}
+.radar-filter-heading strong {font-size:14px;color:#e7f0ff;}
+.radar-filter-heading span {font-size:11px;color:#8da5c1;}
+.radar-category-list {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+.radar-category {min-width:0;border:1px solid #293854;border-radius:12px;background:#131f34;overflow:hidden;}
+.radar-category[open] {border-color:#55439c;background:#151f38;}
+.radar-category summary {list-style:none;display:flex;align-items:center;gap:10px;cursor:pointer;padding:14px;}
+.radar-category summary::-webkit-details-marker {display:none;}
+.radar-category summary:focus-visible {outline:2px solid #9072fc;outline-offset:-2px;}
+.radar-category-symbol {flex:0 0 auto;font-size:20px;}
+.radar-category-text {flex:1;min-width:0;}
+.radar-category-text strong {display:block;color:#f2efff;font-size:13px;}
+.radar-category-text small {display:block;color:#8b9dba;font-size:11px;margin-top:3px;}
+.radar-category-number {flex:0 0 auto;color:#ad9dfa;font-size:10px;}
+.radar-chevron {color:#a3b3d5;font-size:18px;transition:transform .2s;}
+.radar-category[open] .radar-chevron {transform:rotate(180deg);}
+.radar-category .radar-quick-grid {grid-template-columns:repeat(2,minmax(0,1fr));padding:0 12px 12px;gap:8px;}
+.radar-category .radar-switch-card {padding:11px;min-height:54px;background:#1b2a42;}
+.radar-category .radar-control-note {padding:0 14px 15px;}
+@media(max-width:1080px) {.radar-category-list{grid-template-columns:1fr;}}
+@media(max-width:600px) {.radar-category .radar-quick-grid{grid-template-columns:1fr;}.radar-category-number{display:none;}}
