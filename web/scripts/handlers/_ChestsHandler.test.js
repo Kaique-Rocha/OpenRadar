@@ -83,6 +83,20 @@ describe('ChestsHandler', () => {
         });
     });
 
+    describe('shifted dungeon chest event', () => {
+        test('recovers a coordinate pair when parameter 1 is a scalar', () => {
+            handler.addChestEvent({0: 132, 1: 7, 7: [120.5, -45.25], 3: 'DUNGEON_CHEST', 5: 2});
+            expect(handler.chestsList).toHaveLength(1);
+            expect(handler.chestsList[0]).toMatchObject({id: 132, posX: 120.5, posY: -45.25});
+        });
+
+        test('does not invent chest coordinates when no valid pair exists', () => {
+            handler.addChestEvent({0: 90, 1: 8, 7: 123, 2: null});
+            expect(handler.chestsList).toHaveLength(0);
+            expect(window.logger.warn).toHaveBeenCalled();
+        });
+    });
+
     describe('addChest dedup', () => {
         // @verified 2026-04-18: addChest with duplicate id does not add a second entry.
         test('synthetic: addChest dedup by id does not duplicate entries', () => {
