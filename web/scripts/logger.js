@@ -14,7 +14,11 @@ class Logger {
         this.wsClient = null;
         this.buffer = [];
         this.sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        this.maxBufferSize = 200;
+        this.maxBufferSize = 100;
+        // Burst protection for repeated warnings and errors while stationary.
+        this.lastEmitted = new Map();
+        this.repeatIntervalMs = 15000;
+        this.maxRepeatKeys = 512;
         this.flushIntervalMs = 5000;
         this.flushIntervalId = null;
         this.startFlushInterval();
@@ -55,21 +59,40 @@ class Logger {
     log(level, category, event, data = {}) {
         if (!this.shouldLog(level, category)) return;
 
-        const logEntry = {
-            timestamp: new Date().toISOString(),
-            level,
-            category,
-            event,
-            data,
-            sessionId: this.sessionId,
-            page: window.location.pathname
-        };
+        // Both destinations off: do not allocate a log entry at all.
+        const toConsole = settingsSync.getBool('settingLogToConsole');
+        const toServer = settingsSync.getBool('settingLogToServer') && socketConnected;
+        if (!toConsole && !toServer) return;
 
-        if (settingsSync.getBool('settingLogToConsole')) {
-            this.logToConsole(logEntry);
+        // Rate-limit identical categories/events (including massive bursts at idle).
+        // This affects diagnostics only; gameplay event routing is untouched.
+        const key = level + ':' + category + ':' + event;
+        const now = Date.now();
+        const last = this.lastEmitted.get(key);
+        if (last !== undefined && now - last < this.repeatIntervalMs) return;
+        if (this.lastEmitted.size >= this.maxRepeatKeys) this.lastEmitted.clear();
+        this.lastEmitted.set(key, now);
+
+        // Do not retain large nested objects or raw packet buffers in diagnostics.
+        let safeData = data;
+        if (data && typeof data === 'object') {
+            safeData = {};
+            for (const [name, value] of Object.entries(data).slice(0, 12)) {
+                if (name === 'allParameters' || name === 'parameters') {
+                    safeData[name] = '[omitted: raw packet]';
+                } else if (value !== null && typeof value === 'object') {
+                    safeData[name] = '[object]';
+                } else {
+                    safeData[name] = typeof value === 'string' ? value.slice(0, 256) : value;
+                }
+            }
         }
-
-        if (settingsSync.getBool('settingLogToServer') && socketConnected) {
+        const logEntry = {
+            timestamp: new Date(now).toISOString(), level, category, event,
+            data: safeData, sessionId: this.sessionId, page: window.location.pathname
+        };
+        if (toConsole) this.logToConsole(logEntry);
+        if (toServer) {
             this.buffer.push(logEntry);
             if (this.buffer.length >= this.maxBufferSize) this.flush();
         }

@@ -306,31 +306,8 @@ export function onEvent(Parameters) {
     const id = parseInt(Parameters[0]);
     const eventCode = Parameters[252];
 
-    // Raw packet logging
-    window.logger?.debug(CATEGORIES.NETWORK, `Event_${eventCode}`, {
-        id,
-        eventCode,
-        allParameters: Parameters
-    });
-
-    // Detailed event logging (skip verbose events)
-    if (eventCode !== EventCodes.RegenerationHealthChanged) {
-        const paramDetails = {};
-        for (let key in Parameters) {
-            if (Parameters.hasOwnProperty(key) && key !== '252' && key !== '0') {
-                paramDetails[`param[${key}]`] = Parameters[key];
-            }
-        }
-
-        window.logger?.debug(CATEGORIES.NETWORK, `Event_${eventCode}_ID_${id}`, {
-            id,
-            eventCode,
-            eventName: getEventName(eventCode),
-            parameterCount: Object.keys(Parameters).length,
-            parameters: paramDetails
-        });
-    }
-
+    // Hot path: never serialize raw Photon packets or build duplicate debug
+    // payloads here. The handlers below still receive the complete parameters.
     const {
         playersHandler, mobsHandler, harvestablesHandler, chestsHandler,
         dungeonsHandler, fishingHandler, wispCageHandler
