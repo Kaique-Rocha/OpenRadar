@@ -219,13 +219,6 @@ function handleJoinResponse(Parameters, clearHandlersCallback) {
     clearHandlersCallback();
 }
 
-const EVENT_NAMES_BY_CODE = new Map(Object.entries(EventCodes).map(([name, code]) => [code, name]));
-
-// Helper function to get event name (for debugging)
-function getEventName(eventCode) {
-    return EVENT_NAMES_BY_CODE.get(eventCode) ?? `Unknown_${eventCode}`;
-}
-
 export function init(deps) {
     handlers = deps.handlers;
     map = deps.map;
