@@ -67,29 +67,18 @@ export class DungeonsHandler
 
     dungeonEvent(parameters)
     {
-        // Ultra-detailed debug: Log ALL parameters to identify patterns
-        const allParams = {};
-        for (let key in parameters) {
-            if (parameters.hasOwnProperty(key)) {
-                allParams[`param[${key}]`] = parameters[key];
-            }
-        }
-
-        window.logger?.debug(CATEGORIES.DUNGEONS, 'new_dungeon_all_params', {
-            dungeonId: parameters[0],
-            position: parameters[7],
-            allParameters: allParams,
-            parameterCount: Object.keys(parameters).length
-        });
-
         const id = parameters[0];
         const position = parameters[1];
-        // Knightfall moved the Mist portal name from [3] to [15]; Dragonfire shifted it to [16].
-        const name = parameters[3] || parameters[16] || '';
-        // Parameters[9] is the enchant (0-4) since Dragonfire; Parameters[7] is a type/variant id.
+        if (!Array.isArray(position) || position.length < 2 ||
+            !Number.isFinite(Number(position[0])) || !Number.isFinite(Number(position[1]))) {
+            window.logger?.warn(CATEGORIES.DUNGEONS, 'invalid_dungeon_position', {id});
+            return;
+        }
+        // Dragonfire shifted the Mists portal name from [15] to [16].
+        const name = [parameters[3], parameters[16], parameters[15]]
+            .find(value => typeof value === 'string' && value.length > 0) || '';
         const enchant = parameters[9] ?? 0;
-
-        this.addDungeon(id, position[0], position[1], name, enchant);
+        this.addDungeon(id, Number(position[0]), Number(position[1]), name, enchant);
     }
 
     addDungeon(id, posX, posY, name, enchant) {
@@ -99,8 +88,9 @@ export class DungeonsHandler
             return;
         }
 
-        const upperCaseName = name.toUpperCase();
-        const lowerCaseName = name.toLowerCase();
+        const safeName = typeof name === 'string' ? name : '';
+        const upperCaseName = safeName.toUpperCase();
+        const lowerCaseName = safeName.toLowerCase();
         // eslint-disable-next-line no-useless-assignment
         let dungeonType = undefined;
 

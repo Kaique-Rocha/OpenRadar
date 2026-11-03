@@ -136,23 +136,6 @@ export class MobsHandler {
             const mobId = parseInt(parameters[0]);
             const typeId = parseInt(parameters[1]);
 
-            // 🐛 DEBUG ULTRA-DETAILED: Log ALL parameters to identify patterns
-            const allParams = {};
-            for (let key in parameters) {
-                if (parameters.hasOwnProperty(key)) {
-                    allParams[`param[${key}]`] = parameters[key];
-                }
-            }
-
-            window.logger?.debug(CATEGORIES.MOBS, 'new_mob_all_params', {
-                mobId,
-                typeId,
-                posX: parameters[8],
-                posY: parameters[9],
-                allParameters: allParams,
-                parameterCount: Object.keys(parameters).length
-            });
-
             const loc = parameters[7] || [0, 0];
             const posX = this.normalizeNumber(loc[0], 0);
             const posY = this.normalizeNumber(loc[1], 0);

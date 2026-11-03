@@ -59,35 +59,32 @@ export class ChestsHandler {
 
     addChestEvent(Parameters)
     {
-        // Ultra-detailed debug: Log ALL parameters to identify patterns
-        const allParams = {};
-        for (let key in Parameters) {
-            if (Parameters.hasOwnProperty(key)) {
-                allParams[`param[${key}]`] = Parameters[key];
-            }
-        }
-        window.logger?.debug(CATEGORIES.DUNGEONS, 'new_chest_all_params', {
-            chestId: Parameters[0],
-            position: Parameters[7],
-            allParameters: allParams,
-            parameterCount: Object.keys(Parameters).length
-        });
-
         const chestId = Parameters[0];
         // Em alguns eventos atuais Parameters[1] passou a ser um valor escalar
         // (ex.: 6, 7, 8). Procurar somente coordenadas explícitas [x, y].
-        const isCoordinate = value => Array.isArray(value) && value.length >= 2 &&
-            Number.isFinite(Number(value[0])) && Number.isFinite(Number(value[1]));
-        const chestsPosition = isCoordinate(Parameters[1]) ? Parameters[1] :
-            [7, 2, 8, 9].map(index => Parameters[index]).find(isCoordinate);
-        let chestName = Parameters[3];
+        const asCoordinate = value => {
+            if (Array.isArray(value) && value.length >= 2 &&
+                Number.isFinite(Number(value[0])) && Number.isFinite(Number(value[1]))) {
+                return [Number(value[0]), Number(value[1])];
+            }
+            if (value?.type === 'Buffer' && Array.isArray(value.data) && value.data.length >= 8) {
+                const view = new DataView(new Uint8Array(value.data).buffer);
+                const x = view.getFloat32(0, true);
+                const y = view.getFloat32(4, true);
+                if (Number.isFinite(x) && Number.isFinite(y)) return [x, y];
+            }
+            return null;
+        };
+        const chestsPosition = [1, 7, 2, 8, 9]
+            .map(index => asCoordinate(Parameters[index])).find(Boolean);
+        let chestName = typeof Parameters[3] === 'string' ? Parameters[3] :
+            (typeof Parameters[4] === 'string' ? Parameters[4] : 'UNKNOWN_CHEST');
         const rarity = Parameters[5] ?? null;
 
         if (typeof chestName === 'string' && chestName.toLowerCase().includes("mist")) {
             chestName = Parameters[4];
         }
-        if (!Array.isArray(chestsPosition) || chestsPosition.length < 2 ||
-            !Number.isFinite(Number(chestsPosition[0])) || !Number.isFinite(Number(chestsPosition[1]))) {
+        if (!chestsPosition) {
             window.logger?.warn(CATEGORIES.DUNGEONS, 'invalid_chest_position', {chestId, originalPosition: Parameters[1], coordinateCandidates: [2, 7, 8, 9].map(index => ({index, value: Parameters[index]}))});
             return;
         }

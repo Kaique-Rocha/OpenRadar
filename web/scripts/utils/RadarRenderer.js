@@ -205,8 +205,8 @@ export class RadarRenderer {
 
                     this.cachedClusters = this.drawingUtils.detectClusters(
                         merged,
-                        settingsSync.getNumber('settingClusterRadius'),
-                        settingsSync.getNumber('settingClusterMinSize')
+                        Math.max(1, settingsSync.getNumber('settingClusterRadius', 30)),
+                        Math.max(2, settingsSync.getNumber('settingClusterMinSize', 2))
                     );
                     this.lastClusterUpdate = currentTime;
                 } catch (e) {

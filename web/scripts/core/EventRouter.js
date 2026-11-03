@@ -106,6 +106,11 @@ function consumePendingMistChoice() {
 
 function applyMapChange(newMapId, logEvent, extraLogFields = {}) {
     const previousMapId = map.id;
+    // A MistsPlayerJoinedInfo change may not receive a separate ChangeCluster.
+    // Clear stale scene entities on every real zone change, not only responses.
+    if (previousMapId !== newMapId && previousMapId !== -1) {
+        for (const handler of Object.values(handlers || {})) handler?.Clear?.();
+    }
     map.id = newMapId;
     window.currentMapId = map.id;
     lastMapChangeTime = Date.now();
@@ -413,11 +418,13 @@ export function onEvent(Parameters) {
 
         case EventCodes.NewRandomDungeonExit: {
             // Dragonfire inserted a parameter at [4]; the Mists tag moved from [15] to [16].
-            const tag = Parameters[16];
-            if (typeof tag === 'string' && tag.startsWith('MISTS_DUNGEON')) {
+            const tag = [Parameters[16], Parameters[15], Parameters[3]]
+                .find(value => typeof value === 'string' && value.startsWith('MISTS_DUNGEON'));
+            if (tag) {
                 const pos = Parameters[1];
-                if (Array.isArray(pos) && pos.length === 2) {
-                    handlers.mistsDungeonHandler?.addPortal(Parameters[0], pos[0], pos[1], tag);
+                if (Array.isArray(pos) && pos.length >= 2 &&
+                    Number.isFinite(Number(pos[0])) && Number.isFinite(Number(pos[1]))) {
+                    handlers.mistsDungeonHandler?.addPortal(Parameters[0], Number(pos[0]), Number(pos[1]), tag);
                 }
             } else {
                 dungeonsHandler.dungeonEvent(Parameters);

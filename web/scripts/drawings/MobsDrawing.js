@@ -135,6 +135,17 @@ export class MobsDrawing extends DrawingUtils
 
             this.lastVisibleCount++;
 
+            // Distinct marker for collection aspects and guardians, even when
+            // the database categorizes them as ordinary hostile mobs.
+            const specialAspect = isResourceAspect(mobOne);
+            const specialGuardian = isResourceGuardian(mobOne);
+            if (specialAspect || specialGuardian) {
+                this.drawFilledCircle(
+                    ctx, point.x, point.y, this.getMarkerSize(specialGuardian ? 16 : 13),
+                    specialGuardian ? '#ffd34d' : '#31dcf4'
+                );
+            }
+
             if (imageName !== undefined && imageFolder !== undefined) {
                 const useBadge = isLivingResource && settingsSync.getBool('settingResourceColorBadges');
                 const category = useBadge ? this.getResourceCategory(mobOne.name) : null;
@@ -150,7 +161,8 @@ export class MobsDrawing extends DrawingUtils
             }
             else {
                 // Color-coded circles by enemy type
-                const color = this.getEnemyColor(mobOne.type);
+                const color = specialGuardian ? '#b57700' :
+                    (specialAspect ? '#087e92' : this.getEnemyColor(mobOne.type));
 
                 // 🐛 DEBUG: Log color assignment (only once per mob to avoid spam)
                 if (!mobOne._debugLogged) {

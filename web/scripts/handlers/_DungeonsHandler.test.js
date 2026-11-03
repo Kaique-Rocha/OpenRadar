@@ -290,6 +290,13 @@ describe('DungeonsHandler', () => {
         });
     });
 
+    describe('malformed coordinates', () => {
+        test('rejects invalid dungeon positions without throwing', () => {
+            expect(() => handler.dungeonEvent({0: 250, 1: 7, 3: 'T5_KEEPER'})).not.toThrow();
+            expect(handler.dungeonList).toHaveLength(0);
+        });
+    });
+
     describe('Clear', () => {
         // @verified 2026-04-18: Clear empties dungeonList.
         test('synthetic: Clear empties dungeonList', () => {

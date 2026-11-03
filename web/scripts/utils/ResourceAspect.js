@@ -8,8 +8,8 @@ export function getResourceGuardianClass(mob) {
     const match = loot.match(/^(HIDE|FIBER|WOOD|ROCK|ORE)_(MINIGUARDIAN|GUARDIAN)(?:_ROADS)?$/);
     if (match && TYPES.has(match[1])) return match[2] === 'MINIGUARDIAN' ? 'aspect' : 'guardian';
     // Fallback conservador para registros cujo lootType nao foi enviado.
-    if (/^T[1-8]_MOB_MINIGUARDIAN_/.test(name)) return 'aspect';
-    if (/^T[1-8]_MOB_GUARDIAN_/.test(name)) return 'guardian';
+    const byName = name.match(/^T[1-8]_MOB_(?:(?:HIDE|FIBER|WOOD|ROCK|ORE)_)?(MINIGUARDIAN|GUARDIAN)(?:_|$)/);
+    if (byName) return byName[1] === 'MINIGUARDIAN' ? 'aspect' : 'guardian';
     return null;
 }
 export function isResourceAspect(mob) {

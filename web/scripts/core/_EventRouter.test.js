@@ -89,6 +89,11 @@ describe('EventRouter', () => {
         return calls;
     }
 
+    test('Mists abbey entrance accepts legacy parameter 15', () => {
+        EventRouter.onEvent({0: 42, 1: [5, 6], 15: 'MISTS_DUNGEON_SOLO_YELLOW', 252: EventCodes.NewRandomDungeonExit});
+        expect(handlers.mistsDungeonHandler.addPortal).toHaveBeenCalledWith(42, 5, 6, 'MISTS_DUNGEON_SOLO_YELLOW');
+    });
+
     // -------------------------------------------------------------------------
     // onRequest opMove
     // -------------------------------------------------------------------------

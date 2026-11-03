@@ -351,3 +351,39 @@ Based on [ZQRadar](https://github.com/Zeldruck/Albion-Online-ZQRadar) by [@Zeldr
 <p align="center">
   <sub>⚠️ For educational purposes. Use at your own risk.</sub>
 </p>
+
+---
+
+## Estado de validação — build 2.2.4-validation2 (03/11/2026)
+
+Este fork mantém uma **matriz completa dos 57 testes** em [docs/VALIDACAO_57_FUNCOES_2026-11-03.md](docs/VALIDACAO_57_FUNCOES_2026-11-03.md).
+A matriz preserva o registro do jogador: **30 funcionando, 12 falhas e 15 não testadas** antes deste commit.
+Esses resultados **não são convertidos em “passou” apenas porque o código foi modificado**.
+
+### Funcionalidades confirmadas anteriormente pelo jogador
+Inicialização do EXE, painel web, WebSocket, placa de rede, imagens do mapa, zona/posição/troca de mapa,
+zoom, tamanhos, controle de visibilidade, jogadores, diferenciação de alianças/hostilidade,
+mobs T1–T8 e encantados, mobs de coleta, recursos T4–T8 e encantados,
+quantidades e distâncias, retenção de nós, recursos vivos, tesouros escondidos,
+Mists comuns/letais, jaulas de wisps, painéis e preferências persistidas.
+**Alerta sonoro foi marcado como funcional, mas intermitente.**
+
+### Correções feitas nesta revisão (a confirmar no jogo)
+- Suporte a coordenadas Float32 em Buffer Photon e nomes alternativos para baús; logs brutos removidos do handler
+- Validação de posição para masmorras, evitando falhas com payload incompleto
+- Tratamento de entradas de Abadia com identificadores em [16], [15] ou [3]
+- Limpeza de entidades na troca real de zona, inclusive via evento MistsPlayerJoinedInfo
+- Distinção visual de aspectos (azul) e guardiões (dourado), com classificação ampliada
+- Padrões de agrupamento: raio 30 e tamanho mínimo 2, com limites mínimos seguros
+- Redução adicional de alocações de logs em spawns de mobs, baús e masmorras
+- Workflow Windows x64 configurado para gerar **OpenRadar-Windows-x64** a cada push na branch principal
+
+### Pendências ainda não comprovadas
+**Baús por raridade, portais de evento de Halloween e desempenho em partidas reais não estão validados.**
+O portal sazonal não pôde ser identificado por imagem; não houve PCAP de seu spawn.
+Inventar um código Photon ou coordenadas produziria falsos positivos.
+A reprodução e aprovação dos testes de CI não substituem a validação dentro do Albion.
+
+### Executável Windows
+A build é publicada em [GitHub Actions — Gerar EXE Windows x64](https://github.com/Kaique-Rocha/OpenRadar/actions/workflows/gerar-exe-windows.yml)
+como artefato ZIP **OpenRadar-Windows-x64**, sujeito ao sucesso da compilação Docker/Go.

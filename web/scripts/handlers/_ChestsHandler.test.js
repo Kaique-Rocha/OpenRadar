@@ -97,6 +97,21 @@ describe('ChestsHandler', () => {
         });
     });
 
+    describe('modern chest coordinates', () => {
+        test('decodes float32 coordinates from a Photon Buffer', () => {
+            const bytes = new ArrayBuffer(8);
+            const view = new DataView(bytes);
+            view.setFloat32(0, 18.5, true);
+            view.setFloat32(4, -6.25, true);
+            handler.addChestEvent({0: 900, 1: {type: 'Buffer', data: Array.from(new Uint8Array(bytes))}, 3: 'TREASURE_RARE'});
+            expect(handler.chestsList[0]).toMatchObject({posX: 18.5, posY: -6.25});
+        });
+        test('falls back to a string name when parameter 3 is numeric', () => {
+            handler.addChestEvent({0: 901, 1: [8, 9], 3: 7, 4: 'TREASURE_UNCOMMON'});
+            expect(handler.chestsList[0].chestName).toBe('TREASURE_UNCOMMON');
+        });
+    });
+
     describe('addChest dedup', () => {
         // @verified 2026-04-18: addChest with duplicate id does not add a second entry.
         test('synthetic: addChest dedup by id does not duplicate entries', () => {
