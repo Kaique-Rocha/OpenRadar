@@ -2,6 +2,11 @@ name: Gerar EXE Windows (manual)
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/gerar-exe-windows.yml'
 
 permissions:
   contents: read
